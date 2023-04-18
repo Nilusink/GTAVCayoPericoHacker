@@ -9,6 +9,7 @@ Nilusink
 """
 from .image_tools import *
 from ._constants import *
+import pyautogui as pag
 import numpy as np
 
 
@@ -17,7 +18,7 @@ class Matcher:
 
     def __init__(self):
         # load image (instead of screenshot)
-        self._current_screenshot = cv2.imread('cayo.jpg')
+        self._current_screenshot = cv2.imread('cayo2.png')
 
     def find_n_off(self, n_fingerprint: int) -> tuple[int, float]:
         """
@@ -60,6 +61,7 @@ class Matcher:
         for i_finger in range(N_FINGERPRINTS):
             ticks, certainty = self.find_n_off(i_finger)
 
+            # # show a visualization of the matching
             n_matched = i_finger + ticks
             tmp_img = self._current_screenshot.copy()
             draw_fingerprint_rectangle(tmp_img, False, i_finger)
@@ -77,4 +79,6 @@ class Matcher:
         """
         make a new screenshot
         """
-        raise NotImplementedError
+        screenshot = pag.screenshot()
+        screenshot.save("cayo2.png")
+        self._current_screenshot = np.array(screenshot)

@@ -4,14 +4,17 @@ from time import perf_counter
 
 # Capture screenshots of the images to compare
 print("loading")
-img1 = cv2.imread('1.png')
-img2 = cv2.imread('3.png')
+img1 = cv2.imread('finger1.png')
+img2 = cv2.imread('finger2.png')
 
 # Convert the images to grayscale
 print("starting match")
 start = perf_counter()
 gray1 = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
 gray2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+
+gray1 = cv2.resize(gray1, (4000, 400))
+gray2 = cv2.resize(gray2, (4000, 400))
 
 # Create a feature detector and descriptor extractor
 detector = cv2.ORB_create()

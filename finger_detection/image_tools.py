@@ -33,6 +33,7 @@ def get_fingerprint_image(
                  RIGHT_ORIGIN[0]:RIGHT_ORIGIN[0] + RIGHT_SIZE[0]
         ]
 
+        # return finger
         return cv2.resize(finger, LEFT_SIZE)
 
     else:
@@ -101,4 +102,36 @@ def match_images(
     result = cv2.matchTemplate(gray1, gray2, cv2.TM_CCOEFF_NORMED)
 
     # Get the similarity percentage
-    return np.max(result)
+    return abs(np.max(result))
+
+
+def match_images2(
+        image1: np.ndarray,
+        image2: np.ndarray
+) -> float:
+    """
+    match two similar sized images
+
+    :return: similarity between 0 and 1
+    """
+    gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+
+    # Create a feature detector and descriptor extractor
+    detector = cv2.ORB_create()
+
+    # Detect keypoints and descriptors for both images
+    keypoints1, descriptors1 = detector.detectAndCompute(gray1, None)
+    keypoints2, descriptors2 = detector.detectAndCompute(gray2, None)
+
+    # Create a brute-force matcher
+    bf = cv2.BFMatcher(cv2.NORM_HAMMING, crossCheck=True)
+
+    # Match the keypoints and descriptors of the two images
+    matches = bf.match(descriptors1, descriptors2)
+
+    if len(keypoints1) > 0 and len(keypoints2) > 0:
+        # Calculate the similarity score based on the number and quality of the matched keypoints
+        return len(matches) / max(len(keypoints1), len(keypoints2))
+
+    return 0
