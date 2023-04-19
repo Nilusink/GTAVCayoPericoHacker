@@ -44,7 +44,6 @@ def make_procedure():
     """
     m.make_screenshot()
     offsets = m.get_all_off()
-
     print(f"{offsets=}")
     for offset in offsets:
         keyboard_move_ticks(offset)
@@ -62,7 +61,7 @@ def main():
                 print("proc")
                 make_procedure()
 
-        sleep(.05)
+        sleep(.01)
 
 
 if __name__ == "__main__":

@@ -7,15 +7,33 @@ Fingerprint positions on screen
 Author:
 Nilusink
 """
-LEFT_SIZE: tuple[int, int] = (410, 55)
-RIGHT_SIZE: tuple[int, int] = (415, 44)
+from pyautogui import size
 
-LEFT_ORIGIN: tuple[int, int] = (410, 360)
-RIGHT_ORIGIN: tuple[int, int] = (1025, 363 + RIGHT_SIZE[1] // 2)
 
-SCREEN_SIZE: tuple[int, int] = (1920, 1080)
+# variable constants
+SCREEN_SIZE: tuple[int, int] = size()
 
-LEFT_Y_OFF: float = 76
-RIGHT_Y_OFF: float = 76.9
+LEFT_SIZE: tuple[int, int] = (
+    int(.2135416 * SCREEN_SIZE[0]),
+    int(.0509259 * SCREEN_SIZE[1])
+)
+RIGHT_SIZE: tuple[int, int] = (
+    int(.21614583 * SCREEN_SIZE[0]),
+    int(.022916 * SCREEN_SIZE[1])
+)
 
+LEFT_ORIGIN: tuple[int, int] = (
+    int(.2135416 * SCREEN_SIZE[0]),
+    int(.33333 * SCREEN_SIZE[1])
+)
+RIGHT_ORIGIN: tuple[int, int] = (
+    int(.53385416 * SCREEN_SIZE[0]),
+    int(.356481 * SCREEN_SIZE[1])
+)
+
+LEFT_Y_OFF: float = .07037037 * SCREEN_SIZE[1]
+RIGHT_Y_OFF: float = .0712037037 * SCREEN_SIZE[1]
+
+
+# constants
 N_FINGERPRINTS: int = 8

@@ -94,16 +94,14 @@ class Matcher:
                 n_matched = i_finger + ticks
                 tmp_img = self._current_screenshot.copy()
                 draw_fingerprint_rectangle(tmp_img, False, i_finger)
-                draw_fingerprint_rectangle(tmp_img, True, n_matched)
 
                 cv2.rectangle(tmp_img, position[0], position[1], (0, 0, 255))
                 cv2.imshow("match: ", tmp_img)
                 cv2.waitKey(0)
 
             out.append(ticks)
-            if self.debug:
-                print(f" {i_finger}: {out[-1]} ticks ({100 * certainty:.2f}% "
-                      f"certain)")
+            print(f" {i_finger}: {out[-1]} ticks ({100 * certainty:.2f}% "
+                    f"certain)")
 
         return out
 
