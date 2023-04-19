@@ -33,7 +33,6 @@ def get_fingerprint_image(
                  RIGHT_ORIGIN[0]:RIGHT_ORIGIN[0] + RIGHT_SIZE[0]
         ]
 
-        # return finger
         return cv2.resize(finger, LEFT_SIZE)
 
     else:
@@ -168,14 +167,21 @@ def match_images2(
 
     if len(keypoints1) > 0 and len(keypoints2) > 0:
         # Calculate the similarity score based on the number and quality of the matched keypoints
-        return len(matches) / max(len(keypoints1), len(keypoints2)), ((0,
-                                                                       0),
-                                                                      (0, 0))
+        return (
+            len(matches) / max(len(keypoints1),
+            len(keypoints2)), ((0, 0), (0, 0))
+        )
 
-    return 0, ((0, 0), (0, 0))
+    return 0, ((-1, -1), (-1, -1))
 
 
-def sharpen_image(image):
+def sharpen_image(image: np.ndarray) -> np.ndarray:
+    """
+    sharpen a image (in form of a np.ndarray)
+
+    :param image: input image
+    :return: processed image
+    """
     # Define the kernel for sharpening
     kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
 
