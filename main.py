@@ -13,6 +13,11 @@ from time import sleep
 import keyboard as kb
 
 
+# for colors to work
+import os
+os.system('color')
+
+
 # settings
 KEYBOARD_DELAY: float = .01
 
@@ -59,14 +64,14 @@ def main():
     # dramatic startup sequence
     print(f"{CLR_BLUE}::{CLR_RESET} Initiating hack ..", end="", flush=True)
     sleep(1)
-    print(f"\r{CLR_BLUE}::{CLR_RESET} Initiating hack {CLR_GREEN} ✔{CLR_RESET}", end="")
+    print(f"\r{CLR_BLUE}::{CLR_RESET} Initiating hack {CLR_GREEN}done{CLR_RESET}", end="")
     sleep(.2)
 
     print(f"""
 {CLR_BLUE}::{CLR_RESET}
 {CLR_BLUE}::{CLR_RED}{STL_BOLD}\tControls{CLR_RESET}
-{CLR_BLUE}::{CLR_RESET}\t  • {CLR_GREEN}CTRL{CLR_RESET} + {CLR_GREEN}R{CLR_RESET}  ➜  Start Hack
-{CLR_BLUE}::{CLR_RESET}\t  • {CLR_GREEN}CTRL{CLR_RESET} + {CLR_GREEN}T{CLR_RESET}  ➜  Stop Program
+{CLR_BLUE}::{CLR_RESET}\t  • {CLR_GREEN}CTRL{CLR_RESET} + {CLR_GREEN}R{CLR_RESET}  ->  Start Hack
+{CLR_BLUE}::{CLR_RESET}\t  • {CLR_GREEN}CTRL{CLR_RESET} + {CLR_GREEN}T{CLR_RESET}  ->  Stop Program
 {CLR_BLUE}::{CLR_RESET}
 """)
 

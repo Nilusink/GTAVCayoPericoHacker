@@ -29,10 +29,11 @@ class Matcher:
         # set debugging level
         self.debug = debug
 
-        # load image (just for testing, loads last screenshot)
-        self._current_screenshot = sharpen_image(cv2.imread('./images/cayo2.png'))
-        self._current_screenshot_fingerprint_only = \
-            self._current_screenshot[0:-1, SCREEN_SIZE[0] // 2:-1]
+        if debug:
+            # load image (just for testing, loads last screenshot)
+            self._current_screenshot = sharpen_image(cv2.imread('./images/cayo2.png'))
+            self._current_screenshot_fingerprint_only = \
+                self._current_screenshot[0:-1, SCREEN_SIZE[0] // 2:-1]
 
     def find_n_off(
             self,
