@@ -82,7 +82,9 @@ def main():
                 exit(0)
         
             elif kb.is_pressed("r"):
-                print("proc")
+                if m.debug:
+                    print("proc")
+    
                 make_procedure()
 
         sleep(.01)

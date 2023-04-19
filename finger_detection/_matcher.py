@@ -12,6 +12,7 @@ from ._constants import *
 import pyautogui as pag
 import numpy as np
 import cv2
+import os
 
 
 class Matcher:
@@ -111,6 +112,11 @@ class Matcher:
         make a new screenshot
         """
         screenshot = pag.screenshot()
+
+        # check if images folder exists
+        if not os.path.exists("./images"):
+            os.mkdir("images")
+
         screenshot.save("./images/cayo2.png")
         self._current_screenshot = sharpen_image(np.array(screenshot))
         self._current_screenshot_fingerprint_only = \
