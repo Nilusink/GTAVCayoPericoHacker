@@ -87,35 +87,45 @@ def draw_fingerprint_rectangle(
 
 
 def match_images(
-        image1: np.ndarray,
-        image2: np.ndarray
-) -> float:
+        template: np.ndarray,
+        large_image: np.ndarray
+) -> tuple[float, tuple[tuple[int, int], tuple[int, int]]]:
     """
     match two similar sized images
 
-    :return: similarity between 0 and 1
+    :return: similarity between 0 and 1, position (start xy, end xy)
     """
-    gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-    gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+    gray1 = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(large_image, cv2.COLOR_BGR2GRAY)
 
     # Apply template matching
     result = cv2.matchTemplate(gray1, gray2, cv2.TM_CCOEFF_NORMED)
 
+    min_val, max_val, min_loc, max_loc = cv2.minMaxLoc(result)
+
+    # Get the coordinates of the region in the input image
+    # that matches the template image
+    top_left = max_loc
+    bottom_right = (
+        top_left[0] + template.shape[1],
+        top_left[1] + template.shape[0]
+    )
+
     # Get the similarity percentage
-    return abs(np.max(result))
+    return abs(np.max(result)), (top_left, bottom_right)
 
 
 def match_images2(
-        image1: np.ndarray,
-        image2: np.ndarray
-) -> float:
+        template: np.ndarray,
+        large_image: np.ndarray
+) -> tuple[float, tuple[tuple[int, int], tuple[int, int]]]:
     """
     match two similar sized images
 
     :return: similarity between 0 and 1
     """
-    gray1 = cv2.cvtColor(image1, cv2.COLOR_BGR2GRAY)
-    gray2 = cv2.cvtColor(image2, cv2.COLOR_BGR2GRAY)
+    gray1 = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
+    gray2 = cv2.cvtColor(large_image, cv2.COLOR_BGR2GRAY)
 
     # Create a feature detector and descriptor extractor
     detector = cv2.ORB_create()
@@ -130,8 +140,46 @@ def match_images2(
     # Match the keypoints and descriptors of the two images
     matches = bf.match(descriptors1, descriptors2)
 
+    matches = sorted(matches, key=lambda x: x.distance)
+
+    # Extract the matched keypoints from the input and template images
+    input_matched_kp = [keypoints1[match.queryIdx] for match in matches]
+    template_matched_kp = [keypoints2[match.trainIdx] for match in matches]
+
+    # Estimate an affine transformation that maps the template image onto the input image
+    M, _ = cv2.estimateAffinePartial2D(
+        srcPoints=[kp.pt for kp in template_matched_kp],
+        dstPoints=[kp.pt for kp in input_matched_kp], method=cv2.RANSAC,
+        ransacReprojThreshold=3.0, maxIters=2000, confidence=0.99, )
+
+    # Get the coordinates of the corners of the template image in the input image
+    rows, cols = template.shape[:2]
+    corners = [[0, 0], [0, rows], [cols, rows], [cols, 0]]
+    corners = cv2.transform(np.array([corners]), M)[0]
+
+    tmp_img = large_image.copy()
+    # Draw a rectangle around the region in the input image that matches the template image
+    cv2.polylines(
+        tmp_img, [corners.astype(np.int32)], True, (0, 255, 0), thickness=2
+        )
+
+    cv2.imshow("found", tmp_img)
+    cv2.waitKey(0)
+
     if len(keypoints1) > 0 and len(keypoints2) > 0:
         # Calculate the similarity score based on the number and quality of the matched keypoints
-        return len(matches) / max(len(keypoints1), len(keypoints2))
+        return len(matches) / max(len(keypoints1), len(keypoints2)), ((0,
+                                                                       0),
+                                                                      (0, 0))
 
-    return 0
+    return 0, ((0, 0), (0, 0))
+
+
+def sharpen_image(image):
+    # Define the kernel for sharpening
+    kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
+
+    # Apply the kernel to the input image
+    sharpened_image = cv2.filter2D(image, -1, kernel)
+
+    return sharpened_image
