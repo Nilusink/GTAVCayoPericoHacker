@@ -30,7 +30,7 @@ class Matcher:
         self.debug = debug
 
         # load image (just for testing, loads last screenshot)
-        self._current_screenshot = sharpen_image(cv2.imread('cayo2.png'))
+        self._current_screenshot = sharpen_image(cv2.imread('./images/cayo2.png'))
         self._current_screenshot_fingerprint_only = \
             self._current_screenshot[0:-1, SCREEN_SIZE[0] // 2:-1]
 
@@ -110,7 +110,7 @@ class Matcher:
         make a new screenshot
         """
         screenshot = pag.screenshot()
-        screenshot.save("cayo2.png")
+        screenshot.save("./images/cayo2.png")
         self._current_screenshot = sharpen_image(np.array(screenshot))
         self._current_screenshot_fingerprint_only = \
             self._current_screenshot[0:-1, SCREEN_SIZE[0] // 2:-1]
