@@ -178,31 +178,16 @@ for row in range(N_ROWS):
 
         fields[row][column] = m
 
-        # # extract number
-        # gray = cv2.cvtColor(num_img, cv2.COLOR_BGR2GRAY)
-        #
-        # # Apply thresholding to segment the image
-        # thresh = cv2.threshold(
-        #     gray,
-        #     0,
-        #     255,
-        #     cv2.THRESH_BINARY_INV | cv2.THRESH_OTSU
-        # )[1]
-        #
-        # number = pytesseract.image_to_string(thresh, config='--psm 7').strip()
-        #
-        # fields[row][column] = number
-
 
 # check for results
+n_results: int = 0
+target_xy: tuple[int, int] = (-1, -1)
+
+
 for r, row in enumerate(fields):
     for c, column in enumerate(row):
         if c < N_COLUMNS - 4 and column == 0:
-            if all([
-                row[c+1] == 1,
-                row[c+2] == 2,
-                row[c+3] == 3
-            ]):
+            if all([row[c+n] == n for n in range(1, 4)]):
                 start = (
                     FIRST_NUM[0] + int(c * COLUMN_OFFSET) - DIGIT_SIZE_2[0],
                     FIRST_NUM[1] + int(r * ROW_OFFSET) - DIGIT_SIZE_2[1],
@@ -215,7 +200,15 @@ for r, row in enumerate(fields):
                 )
 
                 cv2.rectangle(draw_img, start, end, (255, 255, 0))
+                target_xy = r, c
+                n_results += 1
+
+
+if n_results > 1:
+    print("MULTIPLE SOLUTIONS DETECTED!")
+
+
 delta = perf_counter() - start_time
 
-cv2.imshow(f"took {delta:.3f}s", draw_img)
+cv2.imshow(f"took {delta * 1000:.3f} ms", draw_img)
 cv2.waitKey(0)
