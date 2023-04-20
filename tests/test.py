@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 from time import perf_counter
-from finger_detection.image_tools import *
-from finger_detection import *
+from image_detection.image_tools import *
+from image_detection import *
 
 
 # Capture screenshots of the images to compare
