@@ -7,9 +7,11 @@ Main attraction - tells you how many clicks off the hack is
 Author:
 Nilusink
 """
-from .image_tools import *
-from ._constants import *
+from ..image_detection.image_tools import *
+from ..image_detection import *
 import pyautogui as pag
+from time import sleep
+import keyboard as kb
 import numpy as np
 import cv2
 import os
@@ -17,18 +19,23 @@ import os
 
 class Matcher:
     """
-    matches the fingeprint parts to the big fingerprint and
+    matches the fingerprint parts to the big fingerprint and
     calculates the offsets
     """
     _current_screenshot: np.ndarray = None
     _current_screenshot_fingerprint_only: np.ndarray = None
 
-    def __init__(self, debug: bool = False) -> None:
+    def __init__(
+            self,
+            debug: bool = False,
+            keyboard_delay: float = .2
+    ) -> None:
         """
-        :param debug: If true, writes some more debugging info and vizualisations
+        :param debug: If true, writes some more debugging info and visualizations
         """
         # set debugging level
         self.debug = debug
+        self.keyboard_delay = keyboard_delay
 
         if debug:
             # load image (just for testing, loads last screenshot)
@@ -39,7 +46,11 @@ class Matcher:
     def find_n_off(
             self,
             n_fingerprint: int
-) -> tuple[int, float, tuple[tuple[int, int], tuple[int, int]]]:
+    ) -> tuple[
+        int,
+        float,
+        tuple[tuple[int, int] | list[int], tuple[int, int] | list[int]]
+    ]:
         """
         tells you how many clicks off one specific image is
 
@@ -103,11 +114,11 @@ class Matcher:
 
             out.append(ticks)
             print(f" {i_finger}: {out[-1]} ticks ({100 * certainty:.2f}% "
-                    f"certain)")
+                  f"certain)")
 
         return out
 
-    def make_screenshot(self) -> None:
+    def take_screenshot(self) -> None:
         """
         make a new screenshot
         """
@@ -122,3 +133,34 @@ class Matcher:
         self._current_screenshot_fingerprint_only = \
             self._current_screenshot[0:-1, SCREEN_SIZE[0] // 2:-1]
 
+    def start_procedure(self) -> None:
+        """
+        take a screenshot, process it and move the keyboard
+        """
+        self.take_screenshot()
+        offsets = self.get_all_off()
+
+        for offset in offsets:
+            self.keyboard_move_ticks(offset)
+            kb.press_and_release("s")
+            sleep(self.keyboard_delay)
+
+    def keyboard_move_ticks(self, ticks: int, delay: float = ...) -> None:
+        """
+        move n ticks with the keyboard (left - right arrow keys)
+        """
+        if delay is ...:
+            delay = self.keyboard_delay
+
+        for _ in range(-ticks):
+            kb.press("d")
+            sleep(self.keyboard_delay)
+            kb.release("d")
+    
+            sleep(delay)
+    
+        for _ in range(ticks):
+            kb.press("a")
+            sleep(self.keyboard_delay)
+            kb.release("a")
+            sleep(delay)

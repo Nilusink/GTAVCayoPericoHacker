@@ -5,10 +5,10 @@ main.py
 implements keyboard movement
 
 Author:
-Nilusinkc
+Nilusink
 """
-from finger_detection import Matcher
-from finger_detection import *
+from cayo_hacks.elevator_hack import Matcher
+from cayo_hacks.image_detection import *
 from time import sleep
 import keyboard as kb
 
@@ -18,52 +18,16 @@ import os
 os.system('color')
 
 
-# settings
-KEYBOARD_DELAY: float = .01
-
-
-# global matcher instance
-m = Matcher()
-
-
-def keyboard_move_ticks(ticks: int, delay: float = KEYBOARD_DELAY) -> None:
-    """
-    move n ticks with the keyboard (left - right arrow keys)
-    """
-    for _ in range(-ticks):
-        kb.press("d")
-        sleep(KEYBOARD_DELAY)
-        kb.release("d")
-
-        sleep(delay)
-
-    for _ in range(ticks):
-        kb.press("a")
-        sleep(KEYBOARD_DELAY)
-        kb.release("a")
-        sleep(delay)
-
-
-def make_procedure():
-    """
-    take a screenshot and find all offsets, then move the cursor with the arrow keys
-    """
-    m.make_screenshot()
-    offsets = m.get_all_off()
-    print(f"{offsets=}")
-    for offset in offsets:
-        keyboard_move_ticks(offset)
-        kb.press_and_release("s")
-        sleep(KEYBOARD_DELAY)
-
-
 def main():
     """
     main program loop
     """
     # dramatic startup sequence
     print(f"{CLR_BLUE}::{CLR_RESET} Initiating hack ..", end="", flush=True)
-    sleep(1)
+
+    # create instances
+    finger_matcher = Matcher(keyboard_delay=.01)
+
     print(f"\r{CLR_BLUE}::{CLR_RESET} Initiating hack {CLR_GREEN}done{CLR_RESET}", end="")
     sleep(.2)
 
@@ -82,10 +46,15 @@ def main():
                 exit(0)
         
             elif kb.is_pressed("r"):
-                if m.debug:
+                # elevator fingerprint hack
+                if finger_matcher.debug:
                     print("proc")
     
-                make_procedure()
+                finger_matcher.start_procedure()
+
+            elif kb.is_pressed("e"):
+                # wall safe number hack
+                ...
 
         sleep(.01)
 

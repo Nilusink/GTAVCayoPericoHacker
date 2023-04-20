@@ -177,7 +177,7 @@ def match_images2(
 
 def sharpen_image(image: np.ndarray) -> np.ndarray:
     """
-    sharpen a image (in form of a np.ndarray)
+    sharpen an image (in form of a np.ndarray)
 
     :param image: input image
     :return: processed image
